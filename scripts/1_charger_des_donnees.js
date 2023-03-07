@@ -68,8 +68,6 @@ d3.csv("data/amsterdam_weekdays_1.csv").then(
         let u = d3.rollup(data, v => v.length, v => v.host_is_superhost)
         console.log("u", u)
     }
-
-
 )
 
 const salesData = [
@@ -86,3 +84,90 @@ const salesByCategory = d3.rollup(
 );
 
 console.log(salesByCategory);
+
+// convertir les valeurs numériques en chiffres
+d3.csv("data/donnees_musique.csv", function(d) {
+    return {
+        tonalite: d.tonalite,
+        usage: d.usage,
+        moment: d.moment,
+        nombre: Number(d.nombre),
+    }
+}).then(function(data) {
+    console.log(data)
+})
+
+// somme des nombres
+d3.csv("data/donnees_musique.csv").then(function(data) {
+    const somme = d3.rollup(
+        data,
+        musiques => d3.sum(musiques, musique => musique.nombre)
+    )
+    console.log(somme)
+})
+
+// somme des nombres
+d3.csv("data/donnees_musique.csv").then(function(data) {
+    let somme = 0;
+    data.forEach(ligne => somme += Number(ligne.nombre))
+    console.log(somme)
+})
+
+// convertir les valeurs numériques en chiffres et somme
+d3.csv("data/donnees_musique.csv", function(d) {
+    return {
+        tonalite: d.tonalite,
+        usage: d.usage,
+        moment: d.moment,
+        nombre: Number(d.nombre),
+    }
+}).then(function(data) {
+    let somme = 0;
+    data.forEach(ligne => somme += ligne.nombre)
+    console.log(somme)
+})
+
+// somme des nombres en fonction de l'usage
+d3.csv("data/donnees_musique.csv").then(function(data) {
+    const somme = d3.rollup(
+        data,
+        musiques => d3.sum(musiques, musique => musique.nombre),
+        musiques => musiques.usage
+    )
+    console.log(somme)
+})
+
+// Convertion des valeurs via une fonction
+function conversion_valeurs(d) {
+    return {
+        id: d.id,
+        realSum: +d.realSum,
+        room_type: d.room_type,
+        room_shared: d.room_shared == "True",
+        room_private: d.room_private == "True",
+        person_capacity: +d.person_capacity,
+        host_is_superhost: d.host_is_superhost == "True",
+        multi: +d.multi,
+        biz: +d.biz,
+        cleanliness_rating: +d.cleanliness_rating,
+        guest_satisfaction_overall: +d.guest_satisfaction_overall,
+        bedrooms: +d.bedrooms,
+        dist: +d.dist,
+        metro_dist: +d.metro_dist,
+        attr_index: +d.attr_index,
+        attr_index_norm: +d.attr_index_norm,
+        rest_index: +d.rest_index,
+        rest_index_norm: +d.rest_index_norm,
+        lng: +d.lng,
+        lat: +d.lat,
+    }
+}
+Promise.all([
+    d3.csv("data/amsterdam_weekdays_1.csv", conversion_valeurs),
+    d3.csv("data/amsterdam_weekdays_2.csv", conversion_valeurs),
+]).then(d => {
+    // joindre les deux tableaux
+    let tab_complet = d[0].concat(d[1])
+    console.log(tab_complet);
+})
+
