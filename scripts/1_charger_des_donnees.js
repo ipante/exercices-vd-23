@@ -13,17 +13,17 @@ d3.csv("data/donnees_musique.csv", d => {
 Promise.all([
     d3.csv("data/amsterdam_weekdays_1.csv"),
     d3.csv("data/amsterdam_weekdays_2.csv"),
-]).then(d =>{
+]).then(d => {
     // joindre les deux tableaux
     let tab_complet = d[0].concat(d[1])
     console.log(tab_complet);
 })
 
 // FILTRAGE (EXCLURE, COMBINER ET RENOMMER DES DONNEES)
-let selection = d3.csv("data/amsterdam_weekdays_1.csv", d =>{
+let selection = d3.csv("data/amsterdam_weekdays_1.csv", d => {
     return {
-        capacite : +d.person_capacity,
-        satisfaction : Math.ceil(+d.guest_satisfaction_overall).toFixed(2)
+        capacite: +d.person_capacity,
+        satisfaction: Math.ceil(+d.guest_satisfaction_overall).toFixed(2)
     }
 }).then(d => {
     // console.log(d[0].satisfaction)
@@ -32,44 +32,44 @@ let selection = d3.csv("data/amsterdam_weekdays_1.csv", d =>{
 
 // FILTRAGE 2 : FILTER PAR VALEUR
 d3.csv("data/amsterdam_weekdays_1.csv").then(
-    function(data){
+    function (data) {
         let d_au_top = data.filter(v => v.guest_satisfaction_overall > 91)
-        console.log("au top",d_au_top)
+        console.log("au top", d_au_top)
     }
 )
 
 // GROUPER PAR VARIABLES
 d3.csv("data/amsterdam_weekdays_1.csv").then(
-    function(data){
-        let regroupement_par_pieces = d3.group(data,d => d.room_type)
-        console.log("Map : regroupement par pièces total : ",regroupement_par_pieces)
-        let tab_regroupement_par_pieces = d3.groups(data,d => d.room_type)
-        console.log("Tableau regroupement par pièces total : ",tab_regroupement_par_pieces)
+    function (data) {
+        let regroupement_par_pieces = d3.group(data, d => d.room_type)
+        console.log("Map : regroupement par pièces total : ", regroupement_par_pieces)
+        let tab_regroupement_par_pieces = d3.groups(data, d => d.room_type)
+        console.log("Tableau regroupement par pièces total : ", tab_regroupement_par_pieces)
 
         let chambres_privees = regroupement_par_pieces.get("Private room");
-        console.log("chambres privées",chambres_privees)
+        console.log("chambres privées", chambres_privees)
 
-        let tab_regroupement_par_pieces_et_capacite = d3.group(data,d => d.room_type, d => d.person_capacity)
-        console.log("Tableau regroupement par pièces et capacite : ",tab_regroupement_par_pieces_et_capacite)
-        
+        let tab_regroupement_par_pieces_et_capacite = d3.group(data, d => d.room_type, d => d.person_capacity)
+        console.log("Tableau regroupement par pièces et capacite : ", tab_regroupement_par_pieces_et_capacite)
+
         let chambres_privees_capacites = tab_regroupement_par_pieces_et_capacite.get("Private room").get("3.0")
-        console.log("chambres privées & capacité",chambres_privees_capacites)
+        console.log("chambres privées & capacité", chambres_privees_capacites)
     }
 )
 
 // REDUIRE PAR VARIABLES
 d3.csv("data/amsterdam_weekdays_1.csv").then(
-    function(data){
+    function (data) {
         // trouver le nombre d'appartements
         let t = d3.rollup(data, v => v.length)
-        console.log("t",t)
+        console.log("t", t)
 
         // trouver le nombre d'appartements superhost ou non
         let u = d3.rollup(data, v => v.length, v => v.host_is_superhost)
-        console.log("u",u)
+        console.log("u", u)
     }
 
-    
+
 )
 
 const salesData = [
@@ -77,9 +77,12 @@ const salesData = [
     { category: 'Electronics', product: 'Phone', sales: 500 },
     { category: 'Clothing', product: 'Shirt', sales: 300 },
     { category: 'Clothing', product: 'Pants', sales: 200 }
-  ];
-  
-const salesByCategory = d3.rollup(salesData, d => d.category, d => d3.sum(salesData, d => d.sales));
-  
+];
+
+const salesByCategory = d3.rollup(
+    salesData,
+    products => d3.sum(products, product => product.sales),
+    products => products.category
+);
+
 console.log(salesByCategory);
-  
