@@ -1,3 +1,7 @@
+/*
+    https://observablehq.com/@d3/d3-group
+*/
+
 // IMPORTATION
 
 // charger des données d'un fichier
@@ -38,11 +42,18 @@ d3.csv("data/amsterdam_weekdays_1.csv").then(
 d3.csv("data/amsterdam_weekdays_1.csv").then(
     function(data){
         let regroupement_par_pieces = d3.group(data,d => d.room_type)
-        console.log("Regroupement par pièces total : ",regroupement_par_pieces)
+        console.log("Map : regroupement par pièces total : ",regroupement_par_pieces)
         let tab_regroupement_par_pieces = d3.groups(data,d => d.room_type)
         console.log("Tableau regroupement par pièces total : ",tab_regroupement_par_pieces)
 
-        let chambres_privees = regroupement_par_pieces.get("Private room")
+        let chambres_privees = regroupement_par_pieces.get("Private room");
+        console.log("chambres privées",chambres_privees)
+
+        let tab_regroupement_par_pieces_et_capacite = d3.group(data,d => d.room_type, d => d.person_capacity)
+        console.log("Tableau regroupement par pièces et capacite : ",tab_regroupement_par_pieces_et_capacite)
+        
+        let chambres_privees_capacites = tab_regroupement_par_pieces_et_capacite.get("Private room").get("3.0")
+        console.log("chambres privées & capacité",chambres_privees_capacites)
     }
 )
 
