@@ -19,6 +19,10 @@ Promise.all([
     console.log(tab_complet);
 })
 
+// PREPARATION AUTOMATIQUE DES DONNEES
+let selection_avec_nombres = d3.csv("data/amsterdam_weekdays_1.csv",d3.autoType).then(d => console.log("nombres reconnus: ",d))
+
+
 // FILTRAGE (EXCLURE, COMBINER ET RENOMMER DES DONNEES)
 let selection = d3.csv("data/amsterdam_weekdays_1.csv", d => {
     return {
