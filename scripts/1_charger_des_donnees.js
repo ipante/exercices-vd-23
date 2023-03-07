@@ -71,3 +71,15 @@ d3.csv("data/amsterdam_weekdays_1.csv").then(
 
     
 )
+
+const salesData = [
+    { category: 'Electronics', product: 'Laptop', sales: 1000 },
+    { category: 'Electronics', product: 'Phone', sales: 500 },
+    { category: 'Clothing', product: 'Shirt', sales: 300 },
+    { category: 'Clothing', product: 'Pants', sales: 200 }
+  ];
+  
+const salesByCategory = d3.rollup(salesData, d => d.category, d => d3.sum(salesData, d => d.sales));
+  
+console.log(salesByCategory);
+  
