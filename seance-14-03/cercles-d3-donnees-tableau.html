@@ -29,7 +29,7 @@
         // 5. ajouter chaque attribut
         toile.selectAll("circle") // 1 et 2
             .data(notes) // 3
-            .enter() 
+            .enter() // utile plus tard (peut être omis dans ce code)
             .append("circle") // 4
                 .attr("cx",(d,i) => 50 + i * 20) // affichage en ligne avec espacement égal en fonction du numéro d'index
                 .attr("cy",d => 100- d * 10) // affichage en hauteur en fonction de la valeur du tableau "notes"
