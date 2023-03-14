@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes élèves</title>
+</head>
+<body>
+    <!-- lien à d3 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.2/d3.min.js"></script>
+
+    <!-- ma toile svg-->
+    <svg width="600" height="400"></svg>
+
+    <!-- mon script d'affichage -->  
+    <script>
+        // notes des élèves
+        let notes = [4,4.5,6,2.5,3,3.5];
+
+        // récupérer la toile
+        let toile = d3.select("svg");
+
+        // dessiner des cercles sur la toile
+        // 1. sélection la toile (toile.)
+        // 2. sélectionner les cercles (à dessiner ??? oui)
+        // 3. sélectionner les données
+        // 4. créer chaque cercle
+        // 5. ajouter chaque attribut
+        toile.selectAll("circle") // 1 et 2
+            .data(notes) // 3
+            .enter() 
+            .append("circle") // 4
+                .attr("cx",(d,i) => 50 + i * 20) // affichage en ligne avec espacement égal en fonction du numéro d'index
+                .attr("cy",d => 100- d * 10) // affichage en hauteur en fonction de la valeur du tableau "notes"
+                .attr("r",3)
+                .attr("fill", "red")
+                .attr("opacity",0.2)
+
+
+    </script>
+</body>
+</html>
