@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        svg{
+            border: 1px solid;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.2/d3.min.js"></script>
+    <script>
+
+        // un set de données
+        let donnees = [
+            {t1 : 30, t2 : 240},
+            {t1 : 210, t2 : 1240},
+            {t1 : 430, t2 : 640}
+        ];
+
+        const w = 600;
+        const h = 200;
+
+        const svg = d3.select("body")
+            .append("svg")
+            .attr("width",w)
+            .attr("height",h) 
+
+        const echelleX = d3.scaleBand()
+            .domain(d3.range(donnees.length))
+            .range([10,w])
+
+        const echelleY = d3.scaleLinear()
+            .domain([d3.min(donnees, d=>d.t1),d3.max(donnees, d=>d.t1)])
+            .range([h-10,10])
+
+        const echelleCouleur = d3.scaleLinear()
+            .domain(d3.extent(donnees,d => d.t2))
+            .range(["blue","red"])
+
+        const echelleCouleurDivergente = d3.scaleLinear()
+            .domain(d3.min(donnees, d=>d.t2),0,d3.min(donnees, d=>d.t2))
+            .range(["blue","white","red"])
+
+        svg.selectAll("circle")
+            .data(donnees)
+            .enter()
+            .append("circle")
+                .attr("cx",(d,i) => echelleX(i))
+                .attr("cy", d => echelleY(d.t1))
+                .attr("r",5)
+                .style("fill", d => echelleCouleur(d.t2))
+
+    </script>
+</body>
+</html>
