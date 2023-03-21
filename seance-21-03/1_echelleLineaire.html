@@ -26,9 +26,11 @@
             .attr("width",w)
             .attr("height",h) 
 
-        const echelleX = d3.scaleBand() // ?
+        const echelleX = d3.scalePoint() // ?
             .domain(d3.range(donnees.length))
-            .range([10,w])
+            .range([10, w-10])
+            .padding(0.5)
+            .round(false)
 
         const echelleY = d3.scaleLinear()
             .domain([d3.min(donnees),d3.max(donnees)])

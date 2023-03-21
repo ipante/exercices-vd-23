@@ -34,13 +34,15 @@
             .attr("width",w)
             .attr("height",h) 
 
-        const echelleX = d3.scaleBand()
+        const echelleX = d3.scalePoint() // ?
             .domain(d3.range(donnees.length))
-            .range([10,w])
+            .range([10, w-10])
+            .padding(0.5)
+            .round(false)
 
         const echelleY = d3.scaleLinear()
             .domain([d3.min(donnees, d=>d.t1),d3.max(donnees, d=>d.t1)])
-            .range([h-10,10])
+            .range([h-40,10])
 
         const echelleCouleur = d3.scaleLinear()
             .domain(d3.extent(donnees,d => d.t2))
@@ -61,10 +63,17 @@
 
         let axeX = d3.axisBottom(echelleX)
         axeX.ticks(3) //, "$3.f")
-        // ou axeX.tickValues([4,12,23,100])
+        
+        let axeY = d3.axisLeft(echelleY)
+        axeY.ticks(3)
 
         svg.append("g")
             .call(axeX)
+            .attr("transform", `translate(0 ${h-20})`)
+        
+        svg.append("g")
+            .call(axeY)
+            .attr("transform", `translate(${30} 0)`)
 
     </script>
 </body>
