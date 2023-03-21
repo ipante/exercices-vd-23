@@ -19,7 +19,11 @@
         let donnees = [
             {t1 : 30, t2 : 240},
             {t1 : 210, t2 : 1240},
-            {t1 : 430, t2 : 640}
+            {t1 : 430, t2 : 640},
+            {t1 : 750, t2 : 800},
+            {t1 : 222, t2 : 110},
+            {t1 : 10, t2 : 10},
+            {t1 : 33, t2 : 640},
         ];
 
         const w = 600;
@@ -55,12 +59,12 @@
                 .attr("r",5)
                 .style("fill", d => echelleCouleur(d.t2))
 
-        let axeY = d3.axisRight(echelleY)
-        axeX.ticks(40, "$3.f")
+        let axeX = d3.axisBottom(echelleX)
+        axeX.ticks(3) //, "$3.f")
         // ou axeX.tickValues([4,12,23,100])
 
         svg.append("g")
-            .call(axeY)
+            .call(axeX)
 
     </script>
 </body>
