@@ -16,7 +16,11 @@
     <script>
 
         // un set de données
-        let donnees = [4,20,35,120,17,640,1400];
+        let donnees = [
+            {t1 : 30, t2 : 240},
+            {t1 : 210, t2 : 1240},
+            {t1 : 430, t2 : 640}
+        ];
 
         const w = 600;
         const h = 200;
@@ -31,16 +35,32 @@
             .range([10,w])
 
         const echelleY = d3.scaleLinear()
-            .domain([d3.min(donnees),d3.max(donnees)])
+            .domain([d3.min(donnees, d=>d.t1),d3.max(donnees, d=>d.t1)])
             .range([h-10,10])
+
+        const echelleCouleur = d3.scaleLinear()
+            .domain(d3.extent(donnees,d => d.t2))
+            .range(["blue","red"])
+
+        const echelleCouleurDivergente = d3.scaleLinear()
+            .domain(d3.min(donnees, d=>d.t2),0,d3.min(donnees, d=>d.t2))
+            .range(["blue","white","red"])
 
         svg.selectAll("circle")
             .data(donnees)
             .enter()
             .append("circle")
                 .attr("cx",(d,i) => echelleX(i))
-                .attr("cy", d => echelleY(d))
+                .attr("cy", d => echelleY(d.t1))
                 .attr("r",5)
+                .style("fill", d => echelleCouleur(d.t2))
+
+        let axeY = d3.axisRight(echelleY)
+        axeX.ticks(40, "$3.f")
+        // ou axeX.tickValues([4,12,23,100])
+
+        svg.append("g")
+            .call(axeY)
 
     </script>
 </body>
