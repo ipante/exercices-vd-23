@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        svg {
+            border : 1px solid;
+            overflow : visible
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.2/d3.min.js"></script>
+    <script>
+
+        const donnees = [120,230,410,2100];
+
+        const donneesObjet = [
+            {t : 1234, p : 546},
+            {t : 1234, p : 346},
+            {t : 14, p : 546},
+            {t : 1234, p : 446},
+            {t : 124, p : 546},
+            {t : 123, p : 546}
+        ]
+
+        const w = 600
+        const h = 300
+
+        let svg = d3.select("body")
+            .append("svg")
+                .attr("width",w)
+                .attr("height",h)
+
+        // créer des cercles en lien avec ces valeurs
+        // svg.selectAll("circle")
+        //     .data(donnees)
+        //     .enter()
+        //     .append("circle")
+        //         .attr("cx",20)
+        //         .attr("cy",20)
+        //         .attr("r",20)
+
+        // svg.selectAll("circle")
+        //     .data(donnees)
+        //     .enter()
+        //     .append("circle")
+        //         .attr("cx",(d,i) => 20 + i *60 )
+        //         .attr("cy", d => h - d)
+        //         .attr("r",20)
+
+        const echelleY = d3.scaleLinear()
+            // .domain([120,2100])
+            // .domain([d3.min(donnees),d3.max(donnees)])
+            .domain(d3.extent(donnees))
+            .range([h-20,20])
+
+        const echelleCouleur = d3.scaleLinear()
+            .domain(d3.extent(donnees))
+            .range(["blue","red"])
+
+        // échelles divergente
+        const echelleDivergente = d3.scaleLinear()
+            .domain([d3.min(temperatures),0,d3.max(temperatures)])
+            .range(["blue","white","red"])
+
+        // shorthand echelle
+        const echelleCouleurRaccourcie = d3.scaleLinear(d3.extent(donnees),["blue","red"]);
+
+        // console.log(echelleCouleur(150))
+
+        svg.selectAll("circle")
+            .data(donnees)
+            .enter()
+            .append("circle")
+                .attr("cx",(d,i) => 20 + i *60 )
+                .attr("cy", d => echelleY(d))
+                .attr("r",20)
+                .style("fill",d => echelleCouleur(d))
+
+        // console.log(echelleY(600))    
+
+
+    </script>
+</body>
+</html>
