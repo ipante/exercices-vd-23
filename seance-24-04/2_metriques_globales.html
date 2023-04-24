@@ -33,24 +33,23 @@
                 editeur : d.publisher
             }
         }).then(jeux => {
+            // 2.1 total de jeux
             let total_jeux = d3.rollup(jeux, j => j.length)
-            console.log("Nombre total de jeux : ",total_jeux)
+            console.log("Total de jeux : ",total_jeux);
 
-            let total_studio = d3.rollup(jeux, j => j.length)
-            console.log("Nombre total de jeux : ",total_studio)
+            // 2.2 jeux par studio
+            let total_jeux_par_studio = d3.rollup(jeux, j => j.length, j => j.studio);
+            console.log("Total de jeux par studio : ",total_jeux_par_studio);
 
-            let total_editeur = d3.rollup(jeux, j => j.length)
-            console.log("Nombre total de jeux : ",total_editeur)
+            // 2.3 jeux par éditeur
+            let total_jeux_par_editeur = d3.rollup(jeux, j => j.length, j => j.editeur);
+            console.log("Total de jeux par éditeur : ",total_jeux_par_editeur);
 
-            // let regroupement_par_studio = d3.group(jeux, j => j.studio)
-            // console.log(regroupement_par_studio)
-
-            // let regroupement_par_editeur = d3.group(jeux, j => j.editeur)
-            // console.log(regroupement_par_editeur)
-
-            // let jeux_par_studio = d3.rollup(jeux,j => d3.sum(j, j => j.length, j => j.studio));
-
-            //console.log("Nombre de jeux par studio : ",jeux_par_studio)    
+            // 2.4 WIP Revenu total sur la base du nombre de téléchargements moyen
+            let revenu_estime_rpg_steam = d3.rollup(
+                jeux,j => d3.sum(j, j => j.prix * j.user_moyens)
+            )
+            console.log("Chiffre total des RPG : ",revenu_estime_rpg_steam);
         })
 
     </script>

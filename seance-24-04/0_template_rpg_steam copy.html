@@ -20,6 +20,15 @@
             .attr("width",window.innerWidth)
             .attr("height",window.innerHeight)
 
+        /*
+        Attention : données nettoyées avec expression régulière
+            recherche : "([0-9]+),([0-9]+),([0-9]+)"
+            remplacement : "$1$2$3"
+            
+            recherche : "([0-9]+),([0-9]+)"
+            remplacement : "$1$2"
+        */
+
         let selection = d3.csv("../data/rpg_steam_clean.csv", d => {
             return {
                 jeu : d.game_title,
