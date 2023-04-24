@@ -29,11 +29,11 @@
                 user_min : +d.lowest_estimated_owners_number,
                 user_moyens : +d.average_estimated_owners_number,
                 user_max : +d.highest_estimated_owners_number,
-                developpeur : +d.developer,
-                editeur : +d.publisher
+                studio : d.developer,
+                editeur : d.publisher
             }
-        }).then(d => {
-            console.log(d)
+        }).then(jeux => {
+            console.log(jeux)
         })
 
     </script>

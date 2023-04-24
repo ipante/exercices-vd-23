@@ -29,12 +29,28 @@
                 user_min : +d.lowest_estimated_owners_number,
                 user_moyens : +d.average_estimated_owners_number,
                 user_max : +d.highest_estimated_owners_number,
-                developpeur : +d.developer,
-                editeur : +d.publisher
+                studio : d.developer,
+                editeur : d.publisher
             }
-        }).then(d => {
-            let nombre_jeux = d3.rollup(d, j => j.length, v => v.host_is_superhost)
-            console.log("Nombre de jeux : ",nombre_jeux)
+        }).then(jeux => {
+            let total_jeux = d3.rollup(jeux, j => j.length)
+            console.log("Nombre total de jeux : ",total_jeux)
+
+            let total_studio = d3.rollup(jeux, j => j.length)
+            console.log("Nombre total de jeux : ",total_studio)
+
+            let total_editeur = d3.rollup(jeux, j => j.length)
+            console.log("Nombre total de jeux : ",total_editeur)
+
+            // let regroupement_par_studio = d3.group(jeux, j => j.studio)
+            // console.log(regroupement_par_studio)
+
+            // let regroupement_par_editeur = d3.group(jeux, j => j.editeur)
+            // console.log(regroupement_par_editeur)
+
+            // let jeux_par_studio = d3.rollup(jeux,j => d3.sum(j, j => j.length, j => j.studio));
+
+            //console.log("Nombre de jeux par studio : ",jeux_par_studio)    
         })
 
     </script>
