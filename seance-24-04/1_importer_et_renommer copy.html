@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        svg{
+            border: 1px solid;
+        }
+    </style>
+</head>
+<body>
+    <script src="../lib/d3.min.js"></script>
+    <script>
+
+        const svg = d3.select("body")
+            .append("svg")
+            .attr("width",window.innerWidth)
+            .attr("height",window.innerHeight)
+
+        let selection = d3.csv("../data/rpg_steam_clean.csv", d => {
+            return {
+                jeu : d.game_title,
+                mois_sortie : d.release_month,
+                annee_sortie : d.release_year,
+                prix : +d.release_price,
+                user_min : +d.lowest_estimated_owners_number,
+                user_moyens : +d.average_estimated_owners_number,
+                user_max : +d.highest_estimated_owners_number,
+                developpeur : +d.developer,
+                editeur : +d.publisher
+            }
+        }).then(d => {
+            console.log(d)
+        })
+
+    </script>
+</body>
+</html>

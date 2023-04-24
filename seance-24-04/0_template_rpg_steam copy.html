@@ -22,6 +22,7 @@
 
         let selection = d3.csv("../data/rpg_steam_clean.csv", d => {
             return {
+                jeu : d.game_title,
                 mois_sortie : d.release_month,
                 annee_sortie : d.release_year,
                 prix : +d.release_price,
@@ -32,7 +33,6 @@
                 editeur : +d.publisher
             }
         }).then(d => {
-            // console.log(d[0].satisfaction)
             console.log(d)
         })
 
