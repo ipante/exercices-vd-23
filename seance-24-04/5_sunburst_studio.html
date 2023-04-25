@@ -52,7 +52,7 @@
         });
 
       function dessiner_sunburst(jeux) {
-        let n_jeux_par_annee = 10;
+        let n_jeux_par_annee = 6;
         donnees_pour_sunburst = formaterDonnees(jeux, n_jeux_par_annee);
 
         let generateur_d_arc = d3
@@ -121,39 +121,48 @@
       }
 
       function formaterDonnees(jeux, n_jeux_par_annee) {
+        // Liste des années
         const annees = [...new Set(jeux.map((jeu) => jeu.annee_sortie))].sort(
           (a, b) => a > b
         );
+
+        // Initialisé l'objet de sortie
         const data_sunburst = {
           name: "root",
           children: [],
         };
 
+        // Pour chaque année...
         annees.forEach((annee, i) => {
+          // Filtrer les jeux sortis cette année-là
           const jeux_annee = jeux.filter((jeu) => jeu.annee_sortie == annee);
+
+          // Déterminer le nombre de jeux que chaque studio a sorti cette année-là
           const jeux_par_studio_par_annee = d3
             .rollups(
               jeux_annee,
               (j) => j.length,
               (j) => j.studio
             )
-            .sort((a, b) => a[0].localeCompare(b[0]));
+            .sort((a, b) => a[0].localeCompare(b[0])); // Trier par ordre alphabétique
 
+          // Filtrer les données en fonction du nombre de jeux sorti par studio
           const studio_plus_de_n_jeux_par_annee =
             jeux_par_studio_par_annee.filter((d, i) => d[1] > n_jeux_par_annee);
 
+          // Compléter l'objet de sortie
           data_sunburst.children.push({
-            name: annee.toString(),
+            name: annee.toString(), // chaque année...
             children: studio_plus_de_n_jeux_par_annee.map((jeu) => {
               return {
-                name: jeu[0],
+                name: jeu[0], // chaque studio...
                 children: jeux_annee
-                  .filter((j) => j.studio == jeu[0])
-                  .sort((a, b) => a.jeu.localeCompare(b.jeu))
+                  .filter((j) => j.studio == jeu[0]) // filtrer les jeux de cette année-là par studio...
+                  .sort((a, b) => a.jeu.localeCompare(b.jeu)) // trier par ordre alphabétique...
                   .map((j) => {
                     return {
-                      name: j.jeu,
-                      value: 1,
+                      name: j.jeu, // chaque jeu...
+                      value: 1, // valeur = 1 (chaque jeu a le même poids)
                     };
                   }),
               };
@@ -161,9 +170,12 @@
           });
         });
 
+        // Filtrer les données non-vides
         data_sunburst.children = data_sunburst.children.filter(
           (ligne) => ligne.children.length > 0
         );
+
+        // Ajout de l'info "position" pour gérer les couleurs
         data_sunburst.children.forEach(
           (ligne, i) => (data_sunburst.children[i]["position"] = i)
         );
