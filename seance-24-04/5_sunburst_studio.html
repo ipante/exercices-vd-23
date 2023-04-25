@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      svg {
+        border: 1px solid;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script src="../lib/d3.min.js"></script>
+    <script>
+      const svg = d3
+        .select("body")
+        .append("svg")
+        .attr("width", window.innerWidth)
+        .attr("height", window.innerHeight);
+
+      const graph = svg
+        .append("g")
+        .attr(
+          "transform",
+          `translate(${window.innerWidth / 2}, ${window.innerHeight / 2})`
+        );
+
+      const zone_de_texte = graph.append("g");
+      dessinerZoneDeTexte(zone_de_texte);
+
+      let total = 0;
+
+      let selection = d3
+        .csv("../data/rpg_steam_clean.csv", (d) => {
+          return {
+            jeu: d.game_title,
+            mois_sortie: d.release_month,
+            annee_sortie: Number(d.release_year),
+            prix: +d.release_price,
+            user_min: +d.lowest_estimated_owners_number,
+            user_moyens: +d.average_estimated_owners_number,
+            user_max: +d.highest_estimated_owners_number,
+            studio: d.developer,
+            editeur: d.publisher,
+          };
+        })
+        .then((jeux) => {
+          dessiner_sunburst(jeux);
+        });
+
+      function dessiner_sunburst(jeux) {
+        let n_jeux_par_annee = 10;
+        donnees_pour_sunburst = formaterDonnees(jeux, n_jeux_par_annee);
+
+        let generateur_d_arc = d3
+          .arc()
+          .startAngle((d) => d.x0)
+          .endAngle((d) => d.x1)
+          .innerRadius((d) => Math.sqrt(d.y0))
+          .outerRadius((d) => Math.sqrt(d.y1));
+
+        let racine = d3.hierarchy(donnees_pour_sunburst).sum((d) => d.value);
+
+        let partitionMin = d3.partition().size([2 * Math.PI, 200 * 400]);
+
+        graph
+          .selectAll("path")
+          .data(partitionMin(racine).descendants())
+          .enter()
+          .append("path")
+          .attr("display", function (d) {
+            return d.depth ? null : "none";
+          })
+          .attr("d", generateur_d_arc)
+          .attr("fill", (d) => {
+            const longueur_donnees = donnees_pour_sunburst.children.length;
+            return fonctionRemplissage(d, longueur_donnees);
+          })
+          .on("mouseenter", gererEntreeSouris);
+
+        graph.on("mouseleave", gererSortieSouris);
+
+        total = racine.value;
+        d3.select("#annee").text("TOTAL");
+        d3.select("#annee_total").text(total);
+      }
+
+      function dessinerZoneDeTexte(zone_de_texte) {
+        zone_de_texte
+          .append("text")
+          .attr("id", "annee")
+          .attr("y", -80)
+          .attr("text-anchor", "middle");
+
+        zone_de_texte
+          .append("text")
+          .attr("id", "annee_total")
+          .attr("y", -65)
+          .attr("text-anchor", "middle");
+
+        zone_de_texte
+          .append("text")
+          .attr("id", "studio")
+          .attr("y", -40)
+          .attr("text-anchor", "middle");
+
+        zone_de_texte
+          .append("text")
+          .attr("id", "studio_total")
+          .attr("y", -25)
+          .attr("text-anchor", "middle");
+
+        zone_de_texte
+          .append("text")
+          .attr("id", "jeu")
+          .attr("y", 0)
+          .attr("text-anchor", "middle");
+      }
+
+      function formaterDonnees(jeux, n_jeux_par_annee) {
+        const annees = [...new Set(jeux.map((jeu) => jeu.annee_sortie))].sort(
+          (a, b) => a > b
+        );
+        const data_sunburst = {
+          name: "root",
+          children: [],
+        };
+
+        annees.forEach((annee, i) => {
+          const jeux_annee = jeux.filter((jeu) => jeu.annee_sortie == annee);
+          const jeux_par_studio_par_annee = d3.rollups(
+            jeux_annee,
+            (j) => j.length,
+            (j) => j.studio
+          );
+          const studio_plus_de_n_jeux_par_annee =
+            jeux_par_studio_par_annee.filter((d, i) => d[1] > n_jeux_par_annee);
+          data_sunburst.children.push({
+            name: annee.toString(),
+            children: studio_plus_de_n_jeux_par_annee.map((jeu) => {
+              return {
+                name: jeu[0],
+                children: jeux_annee
+                  .filter((j) => j.studio == jeu[0])
+                  .map((j) => {
+                    return {
+                      name: j.jeu,
+                      value: 1,
+                    };
+                  }),
+              };
+            }),
+          });
+        });
+
+        data_sunburst.children = data_sunburst.children.filter(
+          (ligne) => ligne.children.length > 0
+        );
+        data_sunburst.children.forEach(
+          (ligne, i) => (data_sunburst.children[i]["position"] = i)
+        );
+        return data_sunburst;
+      }
+
+      function fonctionRemplissage(donnee, longueur_donnees) {
+        const interval_hsl = 360 / longueur_donnees;
+        if (donnee.depth == 1) {
+          return d3.hsl(donnee.data.position * interval_hsl, 1, 0.5);
+        }
+        if (donnee.depth == 2) {
+          return d3.hsl(donnee.parent.data.position * interval_hsl, 0.8, 0.65);
+        }
+        if (donnee.depth == 3) {
+          return d3.hsl(
+            donnee.parent.parent.data.position * interval_hsl,
+            0.6,
+            0.7
+          );
+        }
+      }
+
+      function gererEntreeSouris(evenement, donnee) {
+        let sequenceArray = donnee.ancestors().reverse();
+        sequenceArray.shift();
+        d3.selectAll("path").style("opacity", 0.3);
+
+        svg
+          .selectAll("path")
+          .filter(function (node) {
+            return sequenceArray.indexOf(node) >= 0;
+          })
+          .style("opacity", 1);
+
+        d3.select("#studio").text("");
+        d3.select("#studio_total").text("");
+        d3.select("#jeu").text("");
+
+        sequenceArray.forEach((d) => {
+          if (d.depth == 1) {
+            d3.select("#annee").text(d.data.name);
+
+            d3.select("#annee_total").text(d.value);
+          }
+          if (d.depth == 2) {
+            d3.select("#studio").text(d.data.name);
+
+            d3.select("#studio_total").text(d.value);
+          }
+          if (d.depth == 3) {
+            d3.select("#jeu").text(d.data.name);
+          }
+        });
+      }
+
+      function gererSortieSouris(evenement, donnee) {
+        d3.selectAll("path").on("mouseover", null);
+
+        d3.selectAll("path")
+          .transition()
+          .duration(500)
+          .style("opacity", 1)
+          .on("end", function () {
+            d3.select(this).on("mouseover", gererEntreeSouris);
+          });
+
+        d3.select("#annee").text("TOTAL");
+        d3.select("#annee_total").text(total);
+        d3.select("#studio").text("");
+        d3.select("#studio_total").text("");
+        d3.select("#jeu").text("");
+      }
+    </script>
+  </body>
+</html>
