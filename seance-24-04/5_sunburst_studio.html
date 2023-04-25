@@ -138,8 +138,10 @@
               (j) => j.studio
             )
             .sort((a, b) => a[0].localeCompare(b[0]));
+
           const studio_plus_de_n_jeux_par_annee =
             jeux_par_studio_par_annee.filter((d, i) => d[1] > n_jeux_par_annee);
+
           data_sunburst.children.push({
             name: annee.toString(),
             children: studio_plus_de_n_jeux_par_annee.map((jeu) => {
