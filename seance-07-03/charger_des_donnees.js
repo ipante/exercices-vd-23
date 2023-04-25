@@ -138,7 +138,7 @@ d3.csv("../data/donnees_musique.csv").then(function(data) {
         musiques => d3.sum(musiques, musique => musique.nombre),
         musiques => musiques.usage
     )
-    console.log(somme)
+    console.log("ligne 140",somme)
 })
 
 // Convertion des valeurs via une fonction
