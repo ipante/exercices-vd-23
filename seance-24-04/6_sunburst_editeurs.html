@@ -103,13 +103,13 @@
 
         zone_de_texte
           .append("text")
-          .attr("id", "studio")
+          .attr("id", "editeur")
           .attr("y", -40)
           .attr("text-anchor", "middle");
 
         zone_de_texte
           .append("text")
-          .attr("id", "studio_total")
+          .attr("id", "editeur_total")
           .attr("y", -25)
           .attr("text-anchor", "middle");
 
@@ -131,22 +131,24 @@
 
         annees.forEach((annee, i) => {
           const jeux_annee = jeux.filter((jeu) => jeu.annee_sortie == annee);
-          const jeux_par_studio_par_annee = d3
+          const jeux_par_editeur_par_annee = d3
             .rollups(
               jeux_annee,
               (j) => j.length,
-              (j) => j.studio
+              (j) => j.editeur
             )
             .sort((a, b) => a[0].localeCompare(b[0]));
-          const studio_plus_de_n_jeux_par_annee =
-            jeux_par_studio_par_annee.filter((d, i) => d[1] > n_jeux_par_annee);
+          const editeur_plus_de_n_jeux_par_annee =
+            jeux_par_editeur_par_annee.filter(
+              (d, i) => d[1] > n_jeux_par_annee
+            );
           data_sunburst.children.push({
             name: annee.toString(),
-            children: studio_plus_de_n_jeux_par_annee.map((jeu) => {
+            children: editeur_plus_de_n_jeux_par_annee.map((jeu) => {
               return {
                 name: jeu[0],
                 children: jeux_annee
-                  .filter((j) => j.studio == jeu[0])
+                  .filter((j) => j.editeur == jeu[0])
                   .sort((a, b) => a.jeu.localeCompare(b.jeu))
                   .map((j) => {
                     return {
@@ -197,8 +199,8 @@
           })
           .style("opacity", 1);
 
-        d3.select("#studio").text("");
-        d3.select("#studio_total").text("");
+        d3.select("#editeur").text("");
+        d3.select("#editeur_total").text("");
         d3.select("#jeu").text("");
 
         sequenceArray.forEach((d) => {
@@ -208,9 +210,9 @@
             d3.select("#annee_total").text(d.value);
           }
           if (d.depth == 2) {
-            d3.select("#studio").text(d.data.name);
+            d3.select("#editeur").text(d.data.name);
 
-            d3.select("#studio_total").text(d.value);
+            d3.select("#editeur_total").text(d.value);
           }
           if (d.depth == 3) {
             d3.select("#jeu").text(d.data.name);
@@ -231,8 +233,8 @@
 
         d3.select("#annee").text("TOTAL");
         d3.select("#annee_total").text(total);
-        d3.select("#studio").text("");
-        d3.select("#studio_total").text("");
+        d3.select("#editeur").text("");
+        d3.select("#editeur_total").text("");
         d3.select("#jeu").text("");
       }
     </script>
