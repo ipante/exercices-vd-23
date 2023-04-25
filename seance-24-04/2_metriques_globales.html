@@ -33,23 +33,23 @@
                 editeur : d.publisher
             }
         }).then(jeux => {
-            // 2.1 total de jeux
-            let total_jeux = d3.rollup(jeux, j => j.length)
+            // 2.1 calcul total de jeux
+            let total_jeux = d3.rollup(jeux, j => j.length);
             console.log("Total de jeux : ",total_jeux);
 
-            // 2.2 jeux par studio
+            // 2.2 calcul jeux par studio
             let total_jeux_par_studio = d3.rollup(jeux, j => j.length, j => j.studio);
             console.log("Total de jeux par studio : ",total_jeux_par_studio);
 
-            // 2.3 jeux par éditeur
+            // 2.3 calcul jeux par éditeur
             let total_jeux_par_editeur = d3.rollup(jeux, j => j.length, j => j.editeur);
             console.log("Total de jeux par éditeur : ",total_jeux_par_editeur);
 
-            // 2.4 WIP Revenu total sur la base du nombre de téléchargements moyen
+            // 2.4 calcul Revenu total sur la base du nombre de téléchargements moyen
             let revenu_estime_rpg_steam = d3.rollup(
                 jeux,j => d3.sum(j, j => j.prix * j.user_moyens)
             )
-            console.log("Chiffre total des RPG : ",revenu_estime_rpg_steam);
+            console.log("Revenu total généré par des RPG : ",revenu_estime_rpg_steam);
         })
 
     </script>
