@@ -65,9 +65,12 @@
             //     }                
             // }
 
-            jeux.forEach(j => {
-                console.log(j)
-            });
+            let map_mois_annees = d3.rollup(jeux, d => d.length, d => d.mois_sortie, d => d.annee_sortie)
+            console.log(map_mois_annees);
+
+            for(m of map_mois_annees.entries()){
+                console.log("m",m)
+            }
 
         // [{mois_sortie : 1, annee_sortie : 2019, total : 23}]
             
