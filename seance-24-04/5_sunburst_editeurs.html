@@ -124,6 +124,7 @@
         const annees = [...new Set(jeux.map((jeu) => jeu.annee_sortie))].sort(
           (a, b) => a > b
         );
+        
         const data_sunburst = {
           name: "root",
           children: [],
@@ -131,6 +132,7 @@
 
         annees.forEach((annee, i) => {
           const jeux_annee = jeux.filter((jeu) => jeu.annee_sortie == annee);
+
           const jeux_par_editeur_par_annee = d3
             .rollups(
               jeux_annee,
@@ -138,7 +140,7 @@
               (j) => j.editeur
             )
             .sort((a, b) => a[0].localeCompare(b[0]));
-
+            
           const editeur_plus_de_n_jeux_par_annee =
             jeux_par_editeur_par_annee.filter(
               (d, i) => d[1] > n_jeux_par_annee

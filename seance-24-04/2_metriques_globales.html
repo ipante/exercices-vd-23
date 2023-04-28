@@ -38,7 +38,7 @@
             console.log("Total de jeux : ",total_jeux);
 
             // 2.2 calcul jeux par studio
-            let total_jeux_par_studio = d3.rollups(jeux, j => j.length, j => j.studio);
+            let total_jeux_par_studio = d3.rollup(jeux, j => j.length, j => j.studio);
             console.log("Total de jeux par studio : ",total_jeux_par_studio);
 
             // 2.3 calcul jeux par éditeur

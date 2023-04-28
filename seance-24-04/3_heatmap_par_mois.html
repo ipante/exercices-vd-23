@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        svg{
+            border: 1px solid;
+        }
+    </style>
+</head>
+<body>
+    <script src="../lib/d3.min.js"></script>
+    <script>
+        const h = 600;
+        const l = 600
+
+        const svg = d3.select("body")
+            .append("svg")
+            .attr("width",h)
+            .attr("height",l)
+
+        // helper pour convertir le mois en nombre
+        function mois_en_numerique(m){
+            switch(m){
+                case "January": return 1
+                case "February" : return 2
+                case "March" : return 3
+                case "April" : return 4
+                case "May" : return 5
+                case "June" : return 6
+                case "July" : return 7
+                case "August" : return 8
+                case "September" : return 9
+                case "October" : return 10
+                case "November" : return 11
+                case "December" : return 12
+                default : return null
+            }
+        }
+
+        let selection = d3.csv("../data/rpg_steam_clean.csv", d => {
+            return {
+                // nous ne sélectionnons que les données pertinentes
+                mois_sortie : mois_en_numerique(d.release_month),
+                annee_sortie : +d.release_year,
+            }
+        }).then(jeux => {
+            // transformer les données sous la forme [no_mois,no_annee,total_jeux]
+            // la fonction flatRollup permet d'effondre le tableau normalement généré par un rollups
+            let map_mois_annees = d3.flatRollup(jeux, d => d.length, d => d.mois_sortie, d => d.annee_sortie)
+            console.log("Résultat du flatRollup", map_mois_annees)
+
+
+            
+            // nous devons maintenant convertir notre tableau pour atteindre la forme
+            // {année : valeur, mois : valeur, total : valeur}
+            // requise par la fonction heatmap
+
+            // préparation de l'objet cible pour notre heatmap
+            const tableau_final = map_mois_annees.map(e => {
+                return {
+                    mois_sortie: e[0],
+                    annee_sortie: e[1],
+                    total: e[2]
+                }
+            });
+
+            // tri de ce tableau (deux tris successifs)
+            tableau_final.sort((a, b) => a.mois_sortie > b.mois_sortie);
+            tableau_final.sort((a, b) => a.annee_sortie > b.annee_sortie);
+
+            console.log("Map_mois_annees : ",map_mois_annees);
+            console.log("Tableau final : ",tableau_final)
+
+            console.log("Extent sur notre tableau final : ",d3.extent(map_mois_annees))
+
+            // ici on ne peut pas récupérer les données directement, sans quoi elles ne seront pas ordonnées comme attendu : exemple
+            
+            // récupération de la liste des mois et tri par ordre alphabétique
+            const liste_mois_complete = tableau_final.map(j => j.mois_sortie).sort(d3.ascending);
+            // extraction d'une liste unique avec un set
+            const liste_mois_unique = [...new Set(liste_mois_complete)];
+
+            // récupération de la liste des années
+            const liste_annees_complete = tableau_final.map(j => j.annee_sortie);
+
+            // extraction d'une liste unique avec un set
+            const liste_annees_unique = [...new Set(liste_annees_complete)].sort(d3.ascending);
+            
+            /* CONSTRUCTION DES ECHELLES ET DES AXES */
+
+            // où total vaut 
+
+            // construction de l'échelle des x
+            const x = d3.scaleBand()
+            .range([ 40, l ])
+            .domain(liste_mois_unique)
+            .padding(0.1);
+
+            // ajout de l'axe des x
+            svg.append("g")
+            .attr("transform", `translate(0, ${h - 20})`)
+            .call(d3.axisBottom(x))
+
+            // construction de l'échelle des y
+            const y = d3.scaleBand()
+            .range([ h - 20, 20 ])
+            .domain(liste_annees_unique)
+            .padding(0.1);
+
+            // ajout de l'axe des y
+            svg.append("g")
+            .attr("transform", `translate(${40}, 0)`)
+            .call(d3.axisLeft(y));
+
+            // préparer l'échelle de couleurs
+            const couleurs = d3.scaleLinear()
+            .range(["blue", "aquamarine"])
+            .domain([d3.min(map_mois_annees)[2],d3.max(map_mois_annees)[2]])
+
+            // joindre les données
+            svg.selectAll()
+                .data(tableau_final, j => j.mois_sortie+':'+j.annee_sortie)
+                .join("rect")
+                    .attr("x", j => x(j.mois_sortie))
+                    .attr("y", j => y(j.annee_sortie))
+                    .attr("width", x.bandwidth())
+                    .attr("height", y.bandwidth())
+                    .style("fill", j => couleurs(j.total))      
+        })
+    </script>
+</body>
+</html>
