@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premier graphe en plot</title>
+</head>
+<body>
+<!-- chargement des librairies -->
+<!-- d3 v7-->
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<!-- plot -->
+<script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"></script>
+<script>
+
+// mes données
+
+sales = [
+    {quantités: 10, fruit: "figue"},
+    {quantités: 20, fruit: "date"},
+    {quantités: 40, fruit: "abricot"},
+    {quantités: 30, fruit: "abricot"}
+]
+
+// mon graphe
+let monGraphe1 = Plot.dot(sales, {x: "quantités", y: "fruit"}).plot();
+let monGraphe2 = Plot.barX(sales, {x: "quantités", y: "fruit"}).plot();
+let monGraphe3 = Plot.barY(sales, {y: "quantités", x: "fruit"}).plot();
+
+// ajout de mon graphe à la page
+document.body.appendChild(monGraphe3);
+</script>
+</body>
+</html>
